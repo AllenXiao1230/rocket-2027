@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{"name": "Ground Station", "path": "apps/ground_station"},
+		{"name": "Flight Computer", "path": "firmware/flight_computer"},
+		{"name": "Ground Receiver", "path": "firmware/ground_receiver"},
+		{"name": "Camera", "path": "firmware/camera"},
+		{"name": "Protocol", "path": "protocol"},
+		{"name": "Diagnostic Firmware", "path": "diagnostics/firmware"},
+		{"name": "Diagnostic Host Tools", "path": "diagnostics/host_tools"},
+		{"name": "Documentation", "path": "docs"},
+		{"name": "Data", "path": "data"}
+	],
+	"settings": {}
+}

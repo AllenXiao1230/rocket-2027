@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This test directory belongs to the legacy Wi-Fi camera prototype. Historical
+test results do not validate the current OV5640 UART firmware. Do not deploy
+this project; follow firmware/camera/README.md.

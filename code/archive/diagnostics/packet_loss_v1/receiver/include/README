@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This include directory belongs to the superseded packet-loss v1 receiver.
+Do not add its headers to current firmware or use it as a protocol source.
+See ../../README.md and the repository protocol/README.md.

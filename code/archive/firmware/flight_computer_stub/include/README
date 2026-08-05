@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This include directory belongs to an unused Flight Computer stub. It does not
+implement the current ObserveOnly, telemetry or storage contracts. Do not add
+it to current include paths.

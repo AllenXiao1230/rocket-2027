@@ -1,0 +1,46 @@
+# macOS / editor metadata
+.DS_Store
+**/.DS_Store
+*.swp
+*.swo
+*~
+
+# Patch and merge leftovers
+*.orig
+*.rej
+
+# PlatformIO / embedded build output
+.pio/
+**/.pio/
+
+# Python environments and caches
+.venv/
+**/.venv/
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Generic package/build output
+build/
+dist/
+*.egg-info/
+
+# Runtime logs and production telemetry
+*.log
+data/runs/
+ground_station/telemetry_*.csv
+ground_station/baro_altitude_*.txt
+ground_station/gps_drift_*.txt
+ground_station/icm_vertical_accel_*.txt
+apps/ground_station/telemetry_*.csv
+apps/ground_station/baro_altitude_*.txt
+apps/ground_station/gps_drift_*.txt
+apps/ground_station/icm_vertical_accel_*.txt

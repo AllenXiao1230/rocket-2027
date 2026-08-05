@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This private-library directory belongs to the superseded packet-loss v1
+receiver. It is not a dependency source for Rocket 2027 production code.
+See ../../README.md for the current diagnostic location.

@@ -1,0 +1,10 @@
+{
+  "name": "RocketCore",
+  "version": "0.1.0",
+  "description": "Hardware-independent navigation and flight core for Rocket 2027",
+  "build": {
+    "includeDir": "src"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}

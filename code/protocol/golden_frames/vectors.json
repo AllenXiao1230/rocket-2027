@@ -1,0 +1,37 @@
+{
+  "crc_check": {
+    "input_ascii": "123456789",
+    "crc16_ccitt_false_hex": "29B1"
+  },
+  "telemetry_v2_nominal": {
+    "fields": {
+      "source_flags": 5,
+      "boot_id": 48879,
+      "sequence": 305419896,
+      "uptime_ms": 12345,
+      "valid_flags": 32767,
+      "lat_raw": 250123456,
+      "lon_raw": 1219876543,
+      "gps_alt_dm": 1234,
+      "gps_speed_dms": 87,
+      "sat_count": 9,
+      "roll_cdeg": -1234,
+      "pitch_cdeg": 567,
+      "yaw_ddeg": 1234,
+      "gyro_x_ddeg_s": -12,
+      "gyro_y_ddeg_s": 34,
+      "gyro_z_ddeg_s": -56,
+      "accx_cg": 321,
+      "accy_cg": -654,
+      "accz_cg": 987,
+      "baro_alt_dm": 4321,
+      "battery_mv": 11850,
+      "servo_power_mv": 5100,
+      "servo_angle_ddeg": -120,
+      "flight_state": 5,
+      "error_code": 18,
+      "water_detected": 1
+    },
+    "expected_hex": "a55a02400105efbe7856341239300000ff7f0000c094e80ebfd6b548d2045700092efb3702d204f4ff2200c8ff410172fddb03e1104a2eec1388ff0512016768"
+  }
+}

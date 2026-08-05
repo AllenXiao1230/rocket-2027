@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This test directory belongs to an unused Flight Computer stub. It provides no
+evidence for the current flight firmware. Use the native environment under
+firmware/flight_computer for current regression tests.

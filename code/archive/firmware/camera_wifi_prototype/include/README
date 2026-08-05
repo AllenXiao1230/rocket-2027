@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This include directory belongs to a legacy Wi-Fi camera prototype that may
+contain obsolete interfaces and credentials. Do not deploy or reuse directly.
+Use firmware/camera as the current source of truth.

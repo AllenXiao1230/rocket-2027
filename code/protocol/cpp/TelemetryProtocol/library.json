@@ -1,0 +1,8 @@
+{
+  "name": "TelemetryProtocol",
+  "version": "2.0.0",
+  "description": "Shared rocket telemetry v1/v2 wire protocol",
+  "build": {
+    "includeDir": "src"
+  }
+}

@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This private-library directory belongs to an unused Flight Computer stub.
+It must not be linked into production. Use firmware/flight_computer and the
+shared protocol directory instead.

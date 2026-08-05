@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This private-library directory belongs to the legacy Wi-Fi camera prototype.
+It must not be placed on current include paths or linked into production.
+Use firmware/camera for the current UART camera endpoint.

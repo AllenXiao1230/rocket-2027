@@ -1,0 +1,5 @@
+pyserial
+PyQt5
+PyQt3D
+PyQtWebEngine
+matplotlib

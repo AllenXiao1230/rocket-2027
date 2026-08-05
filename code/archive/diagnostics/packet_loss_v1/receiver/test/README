@@ -1,0 +1,5 @@
+ARCHIVED / NON-PRODUCTION
+
+This test directory belongs to the superseded packet-loss v1 receiver.
+Historical tests and results do not validate the current telemetry v2 link.
+Use diagnostics/firmware/lora_link and protocol/tests instead.

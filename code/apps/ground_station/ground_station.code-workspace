@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{"name": "Ground Station", "path": "."},
+		{"name": "Shared Protocol", "path": "../../protocol"},
+		{"name": "Flight Computer", "path": "../../firmware/flight_computer"},
+		{"name": "Host Diagnostics", "path": "../../diagnostics/host_tools"}
+	],
+	"settings": {
+		"chatgpt.openOnStartup": true
+	}
+}
