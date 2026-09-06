@@ -2,14 +2,11 @@
 
 本目錄是 Rocket 2027 flight、Ground Receiver 與 Ground Station 共用的 wire-format source of truth。
 
-## 版本與相容性
+## 正式協定
 
-| Version | Size | Sync | Integrity | Status |
-| --- | ---: | --- | --- | --- |
-| v1 | 47 bytes | `55 AA` | XOR checksum | frozen、read compatibility only |
-| v2 | 64 bytes | `A5 5A` | CRC-16/CCITT-FALSE | production transmit format |
+本專案僅使用 telemetry v2：64 bytes、sync `A5 5A`、version/length/message type header、little-endian 與 CRC-16/CCITT-FALSE。Flight Computer 對 LoRa 與 UART 傳送同一個 v2 frame；Ground Receiver 與 Ground Station 只接受通過 v2 驗證的 frame。
 
-Flight Computer 預設只送 v2；Ground Receiver 與 Ground Station 必須同時接受合法 v1/v2。v2 使用 `valid_flags`、deterministic sentinel、`boot_id` 與 `sequence` 表達 validity、session 與 link diagnostics。
+v2 使用 `valid_flags`、deterministic sentinel、`boot_id` 與 `sequence` 表達 validity、session 與 link diagnostics。
 
 ## 目錄責任
 
@@ -21,7 +18,6 @@ python/rocket_protocol/          shared Python parser/encoder
 cpp/                             shared C++ encoder/constants
 golden_frames/vectors.json       cross-language golden vectors
 tests/                           Python regression tests
-telemetry_v1.md                  frozen v1 contract
 telemetry_v2.md                  current v2 wire documentation
 ```
 

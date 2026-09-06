@@ -8,7 +8,6 @@ from protocol import (
     TelemetryStreamParser,
     VALID_GPS_POSITION,
     build_frame,
-    build_v2_frame,
     decode_frame,
     is_valid_frame,
 )
@@ -17,7 +16,10 @@ from protocol import (
 class ProtocolTests(unittest.TestCase):
     def test_decode_frame_scaling(self):
         frame = build_frame(
-            time_ds=123,
+            boot_id=42,
+            sequence=7,
+            uptime_ms=12_300,
+            valid_flags=0x7FFF,
             lat_raw=250123456,
             lon_raw=1219876543,
             gps_alt_dm=1234,
@@ -61,7 +63,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(packet.water_detected, 1)
 
     def test_decode_frame_supports_empty_baro_altitude(self):
-        frame = build_frame(baro_alt_dm=INVALID_BARO_ALT_DM)
+        frame = build_frame(valid_flags=0, baro_alt_dm=INVALID_BARO_ALT_DM)
 
         packet = decode_frame(frame)
 
@@ -69,7 +71,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertIsNone(packet.baro_alt_m)
 
     def test_v2_constants_and_validity_are_reexported(self):
-        frame = build_v2_frame(valid_flags=0)
+        frame = build_frame(valid_flags=0)
 
         packet = decode_frame(frame)
 
@@ -79,7 +81,12 @@ class ProtocolTests(unittest.TestCase):
         self.assertTrue(is_valid_frame(frame))
 
     def test_stream_parser_keeps_split_sync_byte(self):
-        frame = build_frame(time_ds=10, battery_mv=12000)
+        frame = build_frame(
+            boot_id=1,
+            sequence=1,
+            valid_flags=0x0200,
+            battery_mv=12000,
+        )
         parser = TelemetryStreamParser()
 
         part1 = bytes([0x00, 0x13, FRAME_HEADER_0])
@@ -91,8 +98,18 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(frames, [frame])
 
     def test_stream_parser_skips_bad_crc_and_recovers(self):
-        good = build_frame(time_ds=25, baro_alt_dm=200)
-        bad = bytearray(build_frame(time_ds=24, baro_alt_dm=100))
+        good = build_frame(
+            boot_id=1,
+            sequence=25,
+            valid_flags=0x0100,
+            baro_alt_dm=200,
+        )
+        bad = bytearray(build_frame(
+            boot_id=1,
+            sequence=24,
+            valid_flags=0x0100,
+            baro_alt_dm=100,
+        ))
         bad[-1] ^= 0xFF
 
         parser = TelemetryStreamParser()

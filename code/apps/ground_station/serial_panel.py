@@ -169,7 +169,6 @@ class SerialPanel(QWidget):
         resync_count: int,
         last_frame_age_ms: int | None,
         *,
-        v1_frames: int = 0,
         v2_frames: int = 0,
         sequence_gaps: int = 0,
         sequence_anomalies: int = 0,
@@ -183,7 +182,6 @@ class SerialPanel(QWidget):
             "Diag: "
             f"rx_bytes={rx_bytes} "
             f"valid_frames={valid_frames} "
-            f"v1={v1_frames} "
             f"v2={v2_frames} "
             f"crc_fail={crc_fail} "
             f"resync={resync_count} "

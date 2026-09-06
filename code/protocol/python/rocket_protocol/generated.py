@@ -4,8 +4,6 @@ Source: protocol/schema/telemetry_v2.json
 Regenerate/check with protocol/tools/generate_protocol.py.
 """
 
-V1_SYNC = b"\x55\xaa"
-V1_FRAME_LENGTH = 47
 V2_SYNC = b"\xa5\x5a"
 V2_VERSION = 2
 V2_FRAME_LENGTH = 64

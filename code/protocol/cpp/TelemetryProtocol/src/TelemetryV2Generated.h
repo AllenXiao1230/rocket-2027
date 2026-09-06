@@ -10,8 +10,6 @@ constexpr uint8_t kTelemetryV2Sync1 = 0x5A;
 constexpr uint8_t kTelemetryV2Version = 2;
 constexpr uint8_t kTelemetryV2FrameLength = 64;
 constexpr uint8_t kTelemetryV2MessageType = 1;
-constexpr uint8_t kTelemetryV1FrameLength = 47;
-
 enum TelemetryValidFlag : uint32_t {
   kValidGpsPosition = 1UL << 0,
   kValidGpsAltitude = 1UL << 1,

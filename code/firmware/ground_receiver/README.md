@@ -2,10 +2,9 @@
 
 Rocket 2027 正式 ESP32-S3 LoRa 下行接收器。
 
-It uses the same radio settings as the flight computer and accepts both frozen
-telemetry v1 (`55 AA`, 47 bytes, XOR) and production telemetry v2 (`A5 5A`,
-64 bytes, CRC-16/CCITT-FALSE). Every accepted frame is written to the selected
-serial transport unchanged.
+It uses the same radio settings as the flight computer and accepts only
+telemetry v2 (`A5 5A`, 64 bytes, CRC-16/CCITT-FALSE). Every accepted frame is
+written to the selected serial transport unchanged.
 
 ## Data path
 

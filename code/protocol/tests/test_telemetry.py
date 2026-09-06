@@ -15,7 +15,6 @@ from rocket_protocol import (
     VALID_ERROR_CODE,
     VALID_FLIGHT_STATE,
     VALID_WATER,
-    build_v1_frame,
     build_v2_frame,
     crc16_ccitt_false,
     decode_frame,
@@ -67,16 +66,23 @@ class TelemetryProtocolTests(unittest.TestCase):
         self.assertFalse(decoded.valid(VALID_ERROR_CODE))
         self.assertFalse(decoded.valid(VALID_WATER))
 
-    def test_mixed_stream_and_every_split_point(self):
-        v1 = build_v1_frame(time_ds=12, flight_state=1)
+    def test_v2_stream_and_every_split_point(self):
         vector = self.vectors["telemetry_v2_nominal"]
         v2 = build_v2_frame(**vector["fields"])
-        stream = b"BOOT:ready\n" + v1 + b"noise" + v2
+        stream = b"BOOT:ready\nnoise" + v2
         for split in range(len(stream) + 1):
             parser = TelemetryStreamParser()
             frames = parser.feed(stream[:split])
             frames += parser.feed(stream[split:])
-            self.assertEqual(frames, [v1, v2], split)
+            self.assertEqual(frames, [v2], split)
+
+    def test_non_v2_sync_is_discarded_before_the_next_v2_frame(self):
+        vector = self.vectors["telemetry_v2_nominal"]
+        v2 = build_v2_frame(**vector["fields"])
+        old_format_prefix = b"\x55\xaa" + bytes(45)
+
+        parser = TelemetryStreamParser()
+        self.assertEqual(parser.feed(old_format_prefix + v2), [v2])
 
     def test_crc_bit_flip_rejected(self):
         vector = self.vectors["telemetry_v2_nominal"]

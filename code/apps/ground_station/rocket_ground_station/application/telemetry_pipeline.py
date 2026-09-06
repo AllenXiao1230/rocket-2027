@@ -87,13 +87,10 @@ def _error_bitmask(frame: TelemetryFrame) -> int | None:
     """Return the complete 8-bit fault mask when it is present.
 
     Unlike scalar u8 fields, 0xFF is meaningful here: it reports all eight
-    defined faults.  V2 validity is therefore determined solely by its flag.
-    Legacy v1 has no validity flags and always carries this field.
+    defined faults.  Validity is therefore determined solely by its flag.
     """
 
-    if frame.protocol_version == 1 or frame.valid(VALID_ERROR_CODE):
-        return frame.error_code
-    return None
+    return frame.error_code if frame.valid(VALID_ERROR_CODE) else None
 
 
 class TelemetryPipeline:
@@ -108,7 +105,6 @@ class TelemetryPipeline:
         self._parser.reset()
         self._mission_clock.reset()
         self._total_frames = 0
-        self._v1_frames = 0
         self._v2_frames = 0
         self._decode_failures = 0
         self._boot_sessions = 0
@@ -123,7 +119,6 @@ class TelemetryPipeline:
     def diagnostics(self) -> PipelineDiagnostics:
         return PipelineDiagnostics(
             total_frames=self._total_frames,
-            v1_frames=self._v1_frames,
             v2_frames=self._v2_frames,
             decode_failures=self._decode_failures,
             boot_sessions=self._boot_sessions,
@@ -151,14 +146,10 @@ class TelemetryPipeline:
                 continue
 
             self._total_frames += 1
-            if frame.protocol_version == 1:
-                self._v1_frames += 1
-                boot_session = None
-            else:
-                self._v2_frames += 1
-                boot_session, should_emit = self._observe_v2_sequence(frame)
-                if not should_emit:
-                    continue
+            self._v2_frames += 1
+            boot_session, should_emit = self._observe_v2_sequence(frame)
+            if not should_emit:
+                continue
 
             snapshots.append(self._snapshot(frame, boot_session))
         return snapshots

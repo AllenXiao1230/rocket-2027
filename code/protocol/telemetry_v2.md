@@ -25,7 +25,7 @@ scalar fields use `0xFFFF`, and invalid `u8` scalar fields use `0xFF`.
 `error_code` is the exception: it is an 8-bit bitmask, so `0xFF` is the valid
 "all eight faults active" value whenever `VALID_ERROR_CODE` is set. When that
 flag is clear the wire default is also `0xFF`, but consumers must report it as
-missing. Legacy v1 has no validity flags and treats `error_code=0xFF` as valid.
+missing.
 
 | Bit | Meaning |
 | ---: | --- |
@@ -51,10 +51,8 @@ altitude from barometer, and bit 3 state altitude from GPS.
 The exact offsets and machine-readable contract are in
 `schema/telemetry_v2.json`.
 
-## Compatibility rollout
+## Deployment rule
 
-1. Mixed parsers and the ground receiver accept v1 and v2.
-2. Production flight firmware transmits v2 only.
-3. v1 remains receive-only compatibility. A v1 transmitter must not be
-   claimed until an explicit, tested build environment exists.
-4. Never transmit both formats every cycle because that doubles LoRa airtime.
+Flight firmware sends v2 only over both LoRa and UART. Ground Receiver and
+Ground Station reject every non-v2 frame. Never transmit more than one format
+in the same flight cycle.

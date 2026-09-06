@@ -9,7 +9,7 @@ apps/ground_station/             production PyQt Ground Station
 firmware/flight_computer/        production ESP32-S3 flight computer
 firmware/ground_receiver/        production LoRa downlink receiver
 firmware/camera/                 production OV5640 UART camera
-protocol/                        canonical telemetry v1/v2 contract
+protocol/                        canonical telemetry v2 contract
 diagnostics/                     diagnostic firmware and host tools
 data/                            controlled samples and legacy run evidence
 docs/                            architecture, safety and migration notes
@@ -96,5 +96,5 @@ Build output、virtual environments、Python cache 與 `data/runs/` 都由根目
 - [`firmware/ground_receiver/README.md`](firmware/ground_receiver/README.md)：receiver environment、燒錄與 LED 狀態。
 - [`firmware/camera/README.md`](firmware/camera/README.md)：camera pin map、燒錄與 UART contract。
 - [`apps/ground_station/README.md`](apps/ground_station/README.md)：Ground Station 操作與測試。
-- [`protocol/README.md`](protocol/README.md)：v1/v2 contract、generated files 與 drift gate。
+- [`protocol/README.md`](protocol/README.md)：v2 contract、generated files 與 drift gate。
 - [`diagnostics/README.md`](diagnostics/README.md)：診斷工具索引。

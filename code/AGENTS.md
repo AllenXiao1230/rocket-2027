@@ -65,11 +65,10 @@ application/main
 
 ## Protocol contract
 
-- v1：47 bytes，sync `55 AA`，XOR checksum；只保留相容讀取。
-- v2：64 bytes，sync `A5 5A`，version/length/message type header，little-endian，CRC-16/CCITT-FALSE。
-- Production flight 預設傳送 v2；receiver 與 Ground Station 必須可同時解析 v1/v2。
+- telemetry 僅有 v2：64 bytes，sync `A5 5A`，version/length/message type header，little-endian，CRC-16/CCITT-FALSE。
+- Flight Computer 的 LoRa 與 UART 必須傳送相同的 v2 frame；Ground Receiver 與 Ground Station 只接受合法 v2 frame。
 - v2 `valid_flags` 未設時，對應欄位必須使用 deterministic sentinel；UI、地圖、state 與 CSV 不得把 sentinel 當成量測值。
-- `error_code` 是 8-bit bitmask 例外：`VALID_ERROR_CODE` 成立時 `0xFF` 代表八項 fault 全部成立；valid bit 未設時才是 missing。v1 沒有 valid flag，`0xFF` 也必須保留為完整 bitmask。
+- `error_code` 是 8-bit bitmask 例外：`VALID_ERROR_CODE` 成立時 `0xFF` 代表八項 fault 全部成立；valid bit 未設時才是 missing。
 - `boot_id + sequence` 用於 session、loss、duplicate 與 out-of-order 統計。
 - Ground Station 對 duplicate/out-of-order v2 frame 只更新 diagnostics，不得覆寫 UI、CSV 或 MissionClock。
 - Ground Station 未明確辨識的 serial link 必須 fail closed 為 LoRa receiver/downlink-only；只有操作員明確選擇 direct flight UART 才可傳 RTC sync。
@@ -152,3 +151,8 @@ git diff --check
 - 依目前 canonical layout、PlatformIO environments 與安全 contract 全面更新 README；新增 root-level build/upload 入口、各 production target 的 port/BOOT/baud 說明、diagnostic 燒錄規則與 protocol README。
 - 修正本檔案的原始專案唯讀路徑為 `/Users/xuan/Documents/rocket2026/code`，並新增 documentation contract，要求未來功能、pin、environment、baud、protocol、路徑與安全規則變更時同步更新 README 與 AGENTS。
 - Archive 內的 PlatformIO boilerplate README 改為 non-production 警告，避免歷史 stub 被誤認為可部署目標；本次只變更文件，不改程式行為。
+
+### 2026-08-05 — telemetry v2-only
+
+- 移除 production protocol library、Ground Receiver、Ground Station parser、CSV diagnostics 與測試中的 v1 encode/decode／mixed-stream 相容路徑；LoRa 與 Flight UART 均維持傳送同一個 64-byte v2 frame，Ground Receiver 與 Ground Station 只接受該 frame。
+- 更新 generated constants、wire contract、operator／firmware 文件與本規範，避免 v1 仍被誤認為可部署通訊格式。驗證須通過 schema drift gate、protocol／Ground Station regression、flight native tests、Ground Receiver production builds 與 `git diff --check`。

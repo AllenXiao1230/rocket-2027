@@ -35,8 +35,6 @@ def render_python(schema: dict) -> str:
         "Regenerate/check with protocol/tools/generate_protocol.py.",
         '"""',
         "",
-        'V1_SYNC = b"\\x55\\xaa"',
-        "V1_FRAME_LENGTH = 47",
         f'V2_SYNC = b"\\x{sync[0]:02x}\\x{sync[1]:02x}"',
         f'V2_VERSION = {schema["version"]}',
         f'V2_FRAME_LENGTH = {schema["frame_length"]}',
@@ -96,8 +94,6 @@ def render_cpp(schema: dict) -> str:
             "constexpr uint8_t kTelemetryV2MessageType = "
             f'{schema["message_type"]};'
         ),
-        "constexpr uint8_t kTelemetryV1FrameLength = 47;",
-        "",
         "enum TelemetryValidFlag : uint32_t {",
     ]
     for name, bit in schema["valid_flags"].items():

@@ -10,17 +10,16 @@ class TelemetrySnapshot:
     """One decoded telemetry sample in engineering units.
 
     Sensor values are ``None`` whenever their v2 validity bit is clear or their
-    wire value is an invalid sentinel.  Legacy v1 has no validity bitmap, so
-    its fields are accepted unless the corresponding sentinel is present.
+    wire value is an invalid sentinel.
     """
 
     protocol_version: int
     source_flags: int
-    boot_id: int | None
-    sequence: int | None
+    boot_id: int
+    sequence: int
     uptime_ms: int
-    valid_flags: int | None
-    boot_session: int | None
+    valid_flags: int
+    boot_session: int
     mission_time_s: float
 
     latitude_deg: float | None
@@ -70,7 +69,6 @@ class PipelineDiagnostics:
     """Immutable view of parser, protocol, and sequence health counters."""
 
     total_frames: int = 0
-    v1_frames: int = 0
     v2_frames: int = 0
     decode_failures: int = 0
     boot_sessions: int = 0

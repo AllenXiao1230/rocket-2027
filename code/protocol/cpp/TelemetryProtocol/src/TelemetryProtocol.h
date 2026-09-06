@@ -40,8 +40,6 @@ struct TelemetryV2Fields {
 };
 
 uint16_t crc16CcittFalse(const uint8_t *data, size_t length);
-uint8_t telemetryV1Xor(const uint8_t *data, size_t length);
-bool isValidTelemetryV1(const uint8_t *frame, size_t length);
 bool isValidTelemetryV2(const uint8_t *frame, size_t length);
 bool encodeTelemetryV2(const TelemetryV2Fields &fields,
                        uint8_t *output,

@@ -81,25 +81,6 @@ uint16_t crc16CcittFalse(const uint8_t *data, size_t length) {
   return crc;
 }
 
-uint8_t telemetryV1Xor(const uint8_t *data, size_t length) {
-  uint8_t value = 0;
-  if (data == 0) {
-    return value;
-  }
-  for (size_t index = 0; index < length; ++index) {
-    value ^= data[index];
-  }
-  return value;
-}
-
-bool isValidTelemetryV1(const uint8_t *frame, size_t length) {
-  return frame != 0 &&
-         length == kTelemetryV1FrameLength &&
-         frame[0] == 0x55 &&
-         frame[1] == 0xAA &&
-         telemetryV1Xor(frame, length - 1) == frame[length - 1];
-}
-
 bool isValidTelemetryV2(const uint8_t *frame, size_t length) {
   if (frame == 0 ||
       length != kTelemetryV2FrameLength ||

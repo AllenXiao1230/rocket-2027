@@ -66,8 +66,7 @@ def snapshot(**changes: object) -> TelemetrySnapshot:
 def diagnostics() -> PipelineDiagnostics:
     return PipelineDiagnostics(
         total_frames=20,
-        v1_frames=2,
-        v2_frames=18,
+        v2_frames=20,
         decode_failures=1,
         boot_sessions=3,
         boot_changes=2,

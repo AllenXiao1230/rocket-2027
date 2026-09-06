@@ -11,7 +11,7 @@ rocket_ground_station.transport
   -> raw bytes and lifecycle events
 
 protocol/python/rocket_protocol
-  -> canonical v1/v2 validation and decode
+  -> canonical v2 validation and decode
 
 rocket_ground_station.application
   -> typed snapshots, sequence policy, mission clock,
@@ -35,7 +35,7 @@ Write exception 或 partial write 是 terminal connection failure：`ERROR -> st
 ### `application/`
 
 - `models.py`：immutable `TelemetrySnapshot` 與 `PipelineDiagnostics`。
-- `telemetry_pipeline.py`：mixed v1/v2 stream、validity conversion、boot/sequence tracking 與 stale-frame suppression。
+- `telemetry_pipeline.py`：v2 stream、validity conversion、boot/sequence tracking 與 stale-frame suppression。
 - `mission_clock.py`：以有效 flight phase 建立 T+，並在 boot/session reset 時重新開始。
 - `flight_state.py`：flight state 與 error bitmask 的純函式解碼。
 - `commands.py`：connection-aware uplink authorization。LoRa receiver/unknown 永遠 downlink-only。
@@ -55,7 +55,7 @@ Top-level Qt widgets 暫時保留供 MainWindow 與 diagnostic tools 使用。`S
 
 Application model 使用 `None` 表示 unavailable。UI、map、plot、state machine 與 CSV 不可重新把 `None` 轉成數字零。
 
-一般 scalar 同時要求 v2 validity bit 成立且 wire value 不是 reserved sentinel。`error_code` 是完整 8-bit mask 的例外：valid bit 成立時 `0xFF` 是合法的 all-fault value；v1 沒有 validity flag，也保留完整 mask。
+一般 scalar 同時要求 v2 validity bit 成立且 wire value 不是 reserved sentinel。`error_code` 是完整 8-bit mask 的例外：valid bit 成立時 `0xFF` 是合法的 all-fault value。
 
 ## Compatibility
 

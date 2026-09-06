@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         self._diag_timer.timeout.connect(self._update_stream_diagnostics)
         self._diag_timer.start()
         self._update_stream_diagnostics()
-        # Versioned v1/v2 decoding lives in the application pipeline.
+        # Canonical telemetry v2 decoding lives in the application pipeline.
 
     # ---------------- UI ----------------
 
@@ -390,7 +390,7 @@ class MainWindow(QMainWindow):
             and "HB" not in text
         ):
             self.event_panel.add_event(
-                "收到的是文字序列資料，不是 47/64-byte telemetry frame。"
+                "收到的是文字序列資料，不是 64-byte telemetry v2 frame。"
             )
             self._text_serial_logged = True
 
@@ -400,11 +400,6 @@ class MainWindow(QMainWindow):
             self._last_frame_monotonic = time.monotonic()
         for snapshot in snapshots:
             self._apply_snapshot(snapshot)
-
-    def _process_legacy_stream(self, data: bytes):
-        """Compatibility replay hook; both v1 and v2 now use one pipeline."""
-
-        self._process_telemetry_stream(data)
 
     def _update_stream_diagnostics(self):
         now = time.monotonic()
@@ -419,7 +414,6 @@ class MainWindow(QMainWindow):
             crc_fail=diagnostics.parser_crc_failures,
             resync_count=diagnostics.parser_resync_count,
             last_frame_age_ms=last_frame_age_ms,
-            v1_frames=diagnostics.v1_frames,
             v2_frames=diagnostics.v2_frames,
             sequence_gaps=diagnostics.sequence_gaps,
             sequence_anomalies=diagnostics.sequence_anomalies,
@@ -432,9 +426,9 @@ class MainWindow(QMainWindow):
             and (now - self._first_rx_monotonic) >= 2.0
         ):
             if self._saw_hb_text:
-                msg = "收到 HB/BOOT 回應，但尚未收到 v1/v2 telemetry（尚未進入 loop 或 port/baud 不符）"
+                msg = "收到 HB/BOOT 回應，但尚未收到 v2 telemetry（尚未進入 loop 或 port/baud 不符）"
             else:
-                msg = "收到資料但非有效 47/64-byte telemetry（port/baud 不符）"
+                msg = "收到資料但非有效 64-byte v2 telemetry（port/baud 不符）"
             self.serial_panel.set_diagnostic_notice(msg, color="#a35f00")
             if not self._non_telemetry_warning_logged:
                 self.event_panel.add_event(msg)
@@ -442,7 +436,7 @@ class MainWindow(QMainWindow):
             return
 
         if diagnostics.total_frames > 0:
-            self.serial_panel.set_diagnostic_notice("v1/v2 telemetry 正常接收中。", color="green")
+            self.serial_panel.set_diagnostic_notice("v2 telemetry 正常接收中。", color="green")
         elif self._rx_bytes > 0:
             self.serial_panel.set_diagnostic_notice("已收到資料，正在等待有效 telemetry frame...", color="#666")
         else:

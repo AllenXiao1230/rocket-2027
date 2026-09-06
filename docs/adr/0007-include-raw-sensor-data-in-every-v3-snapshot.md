@@ -1,0 +1,3 @@
+# Include raw sensor data in every v3 snapshot
+
+Every complete v3 binary status snapshot will include each Flight Computer sensor's latest raw measurement with timestamp and validity, as well as derived engineering values, health, flight and recovery state. Optional payload data and status are Payload-Out-of-Band; high-rate sample windows, NMEA, register dumps and an unbounded event history are excluded. This is a hard telemetry requirement; RF sizing, data representation and transmission rate must be designed around it rather than silently reducing the payload to a derived-only status stream.

@@ -14,10 +14,10 @@ class FrameDecodeError(ValueError):
 class TelemetryFrame:
     protocol_version: int
     source_flags: int
-    boot_id: int | None
-    sequence: int | None
+    boot_id: int
+    sequence: int
     uptime_ms: int
-    valid_flags: int | None
+    valid_flags: int
     lat_raw: int
     lon_raw: int
     gps_alt_dm: int
@@ -41,10 +41,6 @@ class TelemetryFrame:
     water_detected: int
 
     def valid(self, flag: int) -> bool:
-        if self.valid_flags is None:
-            if flag == VALID_BARO_ALTITUDE:
-                return self.baro_alt_dm != INVALID_I16
-            return True
         return bool(self.valid_flags & flag)
 
     @property
@@ -124,13 +120,6 @@ class TelemetryFrame:
         return self.servo_angle_ddeg / 10.0
 
 
-def xor_checksum(data: bytes | bytearray) -> int:
-    value = 0
-    for byte in data:
-        value ^= byte
-    return value
-
-
 def crc16_ccitt_false(data: bytes | bytearray) -> int:
     crc = 0xFFFF
     for byte in data:
@@ -138,62 +127,6 @@ def crc16_ccitt_false(data: bytes | bytearray) -> int:
         for _ in range(8):
             crc = ((crc << 1) ^ 0x1021) & 0xFFFF if crc & 0x8000 else (crc << 1) & 0xFFFF
     return crc
-
-
-def build_v1_frame(
-    *,
-    time_ds: int = 0,
-    lat_raw: int = 0,
-    lon_raw: int = 0,
-    gps_alt_dm: int = 0,
-    gps_speed_dms: int = 0,
-    sat_count: int = 0,
-    roll_cdeg: int = 0,
-    pitch_cdeg: int = 0,
-    yaw_ddeg: int = 0,
-    gyro_x_ddeg_s: int = 0,
-    gyro_y_ddeg_s: int = 0,
-    gyro_z_ddeg_s: int = 0,
-    accx_cg: int = 0,
-    accy_cg: int = 0,
-    accz_cg: int = 0,
-    baro_alt_dm: int = 0,
-    battery_mv: int = 0,
-    servo_power_mv: int = 0,
-    servo_angle_ddeg: int = 0,
-    flight_state: int = 0,
-    error_code: int = 0,
-    water_detected: int = 0,
-) -> bytes:
-    frame = bytearray(V1_FRAME_LENGTH)
-    frame[:2] = V1_SYNC
-    struct.pack_into("<Hii hhB hhH hhh hhh hHHh BBB",
-                     frame,
-                     2,
-                     time_ds & 0xFFFF,
-                     lat_raw,
-                     lon_raw,
-                     gps_alt_dm,
-                     gps_speed_dms,
-                     sat_count & 0xFF,
-                     roll_cdeg,
-                     pitch_cdeg,
-                     yaw_ddeg & 0xFFFF,
-                     gyro_x_ddeg_s,
-                     gyro_y_ddeg_s,
-                     gyro_z_ddeg_s,
-                     accx_cg,
-                     accy_cg,
-                     accz_cg,
-                     baro_alt_dm,
-                     battery_mv & 0xFFFF,
-                     servo_power_mv & 0xFFFF,
-                     servo_angle_ddeg,
-                     flight_state & 0xFF,
-                     error_code & 0xFF,
-                     water_detected & 0xFF)
-    frame[-1] = xor_checksum(frame[:-1])
-    return bytes(frame)
 
 
 def _value(valid_flags: int, flag: int, value: int, invalid: int) -> int:
@@ -267,10 +200,6 @@ def build_v2_frame(
     return bytes(frame)
 
 
-def is_valid_v1_frame(frame: bytes) -> bool:
-    return len(frame) == V1_FRAME_LENGTH and frame[:2] == V1_SYNC and xor_checksum(frame[:-1]) == frame[-1]
-
-
 def is_valid_v2_frame(frame: bytes) -> bool:
     return (
         len(frame) == V2_FRAME_LENGTH
@@ -283,42 +212,7 @@ def is_valid_v2_frame(frame: bytes) -> bool:
 
 
 def is_valid_frame(frame: bytes) -> bool:
-    return is_valid_v1_frame(frame) or is_valid_v2_frame(frame)
-
-
-def decode_v1_frame(frame: bytes) -> TelemetryFrame:
-    if not is_valid_v1_frame(frame):
-        raise FrameDecodeError("invalid telemetry v1 frame")
-    values = struct.unpack_from("<Hii hhB hhH hhh hhh hHHh BBB", frame, 2)
-    return TelemetryFrame(
-        protocol_version=1,
-        source_flags=0,
-        boot_id=None,
-        sequence=None,
-        uptime_ms=values[0] * 100,
-        valid_flags=None,
-        lat_raw=values[1],
-        lon_raw=values[2],
-        gps_alt_dm=values[3],
-        gps_speed_dms=values[4],
-        sat_count=values[5],
-        roll_cdeg=values[6],
-        pitch_cdeg=values[7],
-        yaw_ddeg=values[8],
-        gyro_x_ddeg_s=values[9],
-        gyro_y_ddeg_s=values[10],
-        gyro_z_ddeg_s=values[11],
-        accx_cg=values[12],
-        accy_cg=values[13],
-        accz_cg=values[14],
-        baro_alt_dm=values[15],
-        battery_mv=values[16],
-        servo_power_mv=values[17],
-        servo_angle_ddeg=values[18],
-        flight_state=values[19],
-        error_code=values[20],
-        water_detected=values[21],
-    )
+    return is_valid_v2_frame(frame)
 
 
 def decode_v2_frame(frame: bytes) -> TelemetryFrame:
@@ -356,11 +250,7 @@ def decode_v2_frame(frame: bytes) -> TelemetryFrame:
 
 
 def decode_frame(frame: bytes) -> TelemetryFrame:
-    if frame.startswith(V1_SYNC):
-        return decode_v1_frame(frame)
-    if frame.startswith(V2_SYNC):
-        return decode_v2_frame(frame)
-    raise FrameDecodeError("unknown telemetry sync")
+    return decode_v2_frame(frame)
 
 
 class TelemetryStreamParser:
@@ -383,33 +273,25 @@ class TelemetryStreamParser:
             if len(self._buffer) < 2:
                 return frames
 
-            starts = [
-                index
-                for index in (self._buffer.find(V1_SYNC), self._buffer.find(V2_SYNC))
-                if index >= 0
-            ]
-            if not starts:
-                keep = 1 if self._buffer[-1] in (V1_SYNC[0], V2_SYNC[0]) else 0
+            start = self._buffer.find(V2_SYNC)
+            if start < 0:
+                keep = 1 if self._buffer[-1] == V2_SYNC[0] else 0
                 if len(self._buffer) > keep:
                     self.total_resync_count += 1
                 self._buffer[:] = self._buffer[-keep:] if keep else b""
                 return frames
 
-            start = min(starts)
             if start:
                 self.total_resync_count += 1
                 del self._buffer[:start]
 
-            is_v1 = self._buffer.startswith(V1_SYNC)
-            required = V1_FRAME_LENGTH if is_v1 else V2_FRAME_LENGTH
-            if len(self._buffer) < required:
+            if len(self._buffer) < V2_FRAME_LENGTH:
                 return frames
 
-            candidate = bytes(self._buffer[:required])
-            valid = is_valid_v1_frame(candidate) if is_v1 else is_valid_v2_frame(candidate)
-            if valid:
+            candidate = bytes(self._buffer[:V2_FRAME_LENGTH])
+            if is_valid_v2_frame(candidate):
                 frames.append(candidate)
-                del self._buffer[:required]
+                del self._buffer[:V2_FRAME_LENGTH]
             else:
                 self.total_crc_fail += 1
                 self.total_resync_count += 1

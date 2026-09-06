@@ -31,7 +31,6 @@ METADATA_COLUMNS = (
 
 DIAGNOSTIC_COLUMNS = (
     "diagnostic_total_frames",
-    "diagnostic_v1_frames",
     "diagnostic_v2_frames",
     "diagnostic_decode_failures",
     "diagnostic_boot_sessions",
@@ -200,7 +199,6 @@ class TelemetryCsvLogger:
             "valid_flags": snapshot.valid_flags,
             "source_flags": snapshot.source_flags,
             "diagnostic_total_frames": diagnostics.total_frames,
-            "diagnostic_v1_frames": diagnostics.v1_frames,
             "diagnostic_v2_frames": diagnostics.v2_frames,
             "diagnostic_decode_failures": diagnostics.decode_failures,
             "diagnostic_boot_sessions": diagnostics.boot_sessions,

@@ -34,8 +34,7 @@ Serial write failure 會依序產生 `ERROR`、停止 worker、關閉 serial por
 
 ## Telemetry contract
 
-- v1：47 bytes、`55 AA`、XOR；只保留相容讀取。
-- v2：64 bytes、`A5 5A`、version/length/message type、CRC-16/CCITT-FALSE。
+- 僅接受 v2：64 bytes、`A5 5A`、version/length/message type、CRC-16/CCITT-FALSE。
 - Canonical parser 位於 repository 的 `protocol/python/rocket_protocol`；本應用不維護第二份 wire decoder。
 - v2 `valid_flags` 與 deterministic sentinel 共同保護量測；無效值在 application model 是 `None`，UI 顯示 `---`，CSV 留空。
 - `error_code` 是 8-bit bitmask；有效旗標成立時 `0xFF` 代表八項故障全數成立，不是 missing value。
@@ -83,7 +82,7 @@ PYTHONPATH=apps/ground_station:protocol/python \
 python3 -m unittest discover -s apps/ground_station/tests -q
 ```
 
-目前涵蓋 protocol adapter、mixed v1/v2 pipeline、validity/sentinel、session/sequence、stale-frame filter、MissionClock、command policy、serial lifecycle、port discovery、CSV 與 headless UI presentation。
+目前涵蓋 v2 protocol adapter、validity/sentinel、session/sequence、stale-frame filter、MissionClock、command policy、serial lifecycle、port discovery、CSV 與 headless UI presentation。
 
 ## 顯示規則
 

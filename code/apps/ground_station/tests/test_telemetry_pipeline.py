@@ -32,7 +32,6 @@ from rocket_protocol import (  # noqa: E402
     VALID_SERVO_ANGLE,
     VALID_SERVO_POWER,
     VALID_WATER,
-    build_v1_frame,
     build_v2_frame,
 )
 from rocket_ground_station.application import TelemetryPipeline  # noqa: E402
@@ -185,8 +184,8 @@ class TelemetryPipelineTests(unittest.TestCase):
         self.assertIsNone(sample.water_detected)
         self.assertEqual(sample.error_code, 0xFF)
 
-    def test_full_error_mask_is_valid_in_v2_and_v1(self):
-        v2 = TelemetryPipeline().feed(
+    def test_full_error_mask_is_valid(self):
+        sample = TelemetryPipeline().feed(
             build_v2_frame(
                 boot_id=1,
                 sequence=1,
@@ -194,34 +193,8 @@ class TelemetryPipelineTests(unittest.TestCase):
                 error_code=0xFF,
             )
         )[0]
-        v1 = TelemetryPipeline().feed(
-            build_v1_frame(error_code=0xFF)
-        )[0]
 
-        self.assertEqual(v2.error_code, 0xFF)
-        self.assertEqual(v1.error_code, 0xFF)
-
-    def test_v1_is_supported_and_sentinels_are_hidden(self):
-        frame = build_v1_frame(
-            time_ds=25,
-            lat_raw=250_000_000,
-            lon_raw=1_210_000_000,
-            gps_alt_dm=321,
-            baro_alt_dm=INVALID_I16,
-            battery_mv=12_000,
-            flight_state=2,
-        )
-        sample = TelemetryPipeline().feed(frame)[0]
-
-        self.assertEqual(sample.protocol_version, 1)
-        self.assertIsNone(sample.boot_id)
-        self.assertIsNone(sample.sequence)
-        self.assertIsNone(sample.boot_session)
-        self.assertAlmostEqual(sample.uptime_s, 2.5)
-        self.assertAlmostEqual(sample.gps_altitude_m, 32.1)
-        self.assertIsNone(sample.barometric_altitude_m)
-        self.assertAlmostEqual(sample.primary_altitude_m, 32.1)
-        self.assertAlmostEqual(sample.battery_v, 12.0)
+        self.assertEqual(sample.error_code, 0xFF)
 
     def test_sequence_and_boot_diagnostics(self):
         pipeline = TelemetryPipeline()
@@ -232,17 +205,15 @@ class TelemetryPipelineTests(unittest.TestCase):
                 build_v2_frame(boot_id=10, sequence=103),
                 build_v2_frame(boot_id=10, sequence=102),
                 build_v2_frame(boot_id=11, sequence=0),
-                build_v1_frame(),
             ]
         )
 
         snapshots = pipeline.feed(frames)
         diagnostics = pipeline.diagnostics
 
-        self.assertEqual(len(snapshots), 4)
-        self.assertEqual([sample.sequence for sample in snapshots], [100, 103, 0, None])
-        self.assertEqual(diagnostics.total_frames, 6)
-        self.assertEqual(diagnostics.v1_frames, 1)
+        self.assertEqual(len(snapshots), 3)
+        self.assertEqual([sample.sequence for sample in snapshots], [100, 103, 0])
+        self.assertEqual(diagnostics.total_frames, 5)
         self.assertEqual(diagnostics.v2_frames, 5)
         self.assertEqual(diagnostics.boot_sessions, 2)
         self.assertEqual(diagnostics.boot_changes, 1)
@@ -319,7 +290,7 @@ class TelemetryPipelineTests(unittest.TestCase):
 
     def test_chunking_and_parser_diagnostics_are_exposed(self):
         good = build_v2_frame(boot_id=1, sequence=5)
-        bad = bytearray(build_v1_frame())
+        bad = bytearray(build_v2_frame(boot_id=1, sequence=4))
         bad[-1] ^= 0xFF
         pipeline = TelemetryPipeline()
 

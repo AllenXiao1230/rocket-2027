@@ -36,7 +36,7 @@ Telemetry v2 的唯一 wire-format 真源是 `protocol/schema/telemetry_v2.json`
 ## Production components
 
 - `firmware/flight_computer`：ESP32-S3 sensors、navigation、state、ObserveOnly safety、telemetry 與 storage orchestration。
-- `firmware/ground_receiver`：LoRa v1/v2 validation 與 binary-only serial passthrough；downlink-only。
+- `firmware/ground_receiver`：LoRa v2 validation 與 binary-only serial passthrough；downlink-only。
 - `firmware/camera`：OV5640 UART status/capture/burst endpoint。
 - `apps/ground_station`：serial transport、canonical protocol application pipeline、PyQt UI 與 CSV。
 

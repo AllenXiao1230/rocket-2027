@@ -94,10 +94,7 @@ void receiveFrame(uint32_t nowMs) {
     LoRa.read();
   }
 
-  const bool valid =
-      rocket::protocol::isValidTelemetryV1(frame, length) ||
-      rocket::protocol::isValidTelemetryV2(frame, length);
-  if (valid) {
+  if (rocket::protocol::isValidTelemetryV2(frame, length)) {
     Serial.write(frame, length);
     validFrames++;
     lastValidFrameMs = nowMs;
